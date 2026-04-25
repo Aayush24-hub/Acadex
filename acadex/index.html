@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acadex - Centralized Student Hub</title>
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              DEFAULT: '#001f3f',
+              light: '#003366',
+              dark: '#000a1a'
+            },
+            cream: {
+              DEFAULT: '#fdfbf7',
+              dark: '#f3f0e6'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-cream dark:bg-slate-900 text-slate-800 dark:text-cream transition-colors duration-300 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-slate-800 shadow-md sticky top-0 z-50 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="#" class="flex-shrink-0 flex items-center gap-2 nav-link" data-target="home-section">
+            <img src="logo.png" alt="Acadex Logo" class="h-8 w-8 object-contain">
+            <span class="font-bold text-xl text-navy dark:text-white">Acadex</span>
+          </a>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center space-x-4">
+          <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium hover:bg-cream-dark dark:hover:bg-slate-700 active-nav text-navy dark:text-white" data-target="home-section">Home</a>
+          <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-cream-dark dark:hover:bg-slate-700" data-target="forums-section">Resources</a>
+          <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-cream-dark dark:hover:bg-slate-700" data-target="marketplace-section">Marketplace</a>
+          <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-cream-dark dark:hover:bg-slate-700" data-target="notices-section">Notices</a>
+          <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-cream-dark dark:hover:bg-slate-700" data-target="profile-section">Profile & Saved</a>
+          
+          <!-- Dark Mode Toggle -->
+          <button id="theme-toggle" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full focus:outline-none">
+            <i id="theme-toggle-icon" class="fa-solid fa-moon"></i>
+          </button>
+
+          <!-- Auth Area -->
+          <div id="auth-container" class="ml-4">
+            <!-- Loading state -->
+            <div class="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse hidden"></div>
+            
+            <!-- Login Button -->
+            <button id="login-btn" class="bg-navy hover:bg-navy-light text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+              <i class="fa-brands fa-google mr-2"></i> Sign In
+            </button>
+
+            <!-- User Profile (Hidden by default) -->
+            <div id="user-menu" class="hidden relative">
+              <button id="user-menu-btn" class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-navy dark:focus:border-blue-400 transition duration-150 ease-in-out">
+                <img id="nav-user-photo" class="h-8 w-8 rounded-full object-cover" src="https://via.placeholder.com/40" alt="User avatar">
+              </button>
+              <!-- Dropdown -->
+              <div id="user-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-slate-800 ring-1 ring-black ring-opacity-5 z-50">
+                <div class="px-4 py-2 border-b dark:border-slate-700">
+                  <p id="nav-user-name" class="text-sm font-medium text-slate-900 dark:text-white truncate">User Name</p>
+                </div>
+                <a href="#" class="nav-link block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700" data-target="profile-section">My Profile</a>
+                <button id="logout-btn" class="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700">Sign Out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile menu button -->
+        <div class="flex items-center md:hidden">
+          <button id="theme-toggle-mobile" class="p-2 mr-2 text-slate-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full">
+            <i id="theme-toggle-icon-mobile" class="fa-solid fa-moon"></i>
+          </button>
+          <button id="mobile-menu-btn" class="text-slate-500 hover:text-slate-600 focus:outline-none">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-slate-800 border-t dark:border-slate-700 pb-3 pt-2">
+      <div class="px-2 space-y-1">
+        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium active-nav text-navy dark:text-white" data-target="home-section">Home</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300" data-target="forums-section">Resources</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300" data-target="marketplace-section">Marketplace</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300" data-target="notices-section">Notices</a>
+        <a href="#" class="nav-link block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300" data-target="profile-section">Profile</a>
+      </div>
+      <div id="mobile-auth-container" class="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700 px-4">
+        <button id="mobile-login-btn" class="w-full bg-navy text-white px-4 py-2 rounded-md text-sm font-medium">
+          <i class="fa-brands fa-google mr-2"></i> Sign In
+        </button>
+        <div id="mobile-user-info" class="hidden flex items-center justify-between">
+          <div class="flex items-center">
+            <img id="mobile-user-photo" class="h-10 w-10 rounded-full" src="https://via.placeholder.com/40" alt="">
+            <div class="ml-3">
+              <div id="mobile-user-name" class="text-base font-medium text-slate-800 dark:text-white">User Name</div>
+            </div>
+          </div>
+          <button id="mobile-logout-btn" class="text-red-600 dark:text-red-400 p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700">
+            <i class="fa-solid fa-sign-out-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Login Modal Overlay -->
+  <div id="login-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-50 flex justify-center items-center">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center">
+      <i class="fa-solid fa-lock text-4xl text-navy dark:text-blue-400 mb-4"></i>
+      <h2 class="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Login Required</h2>
+      <p class="text-slate-600 dark:text-slate-400 mb-6">You need to sign in to access this feature.</p>
+      <button id="modal-login-btn" class="w-full bg-navy hover:bg-navy-light text-white px-4 py-3 rounded-lg font-medium transition-colors">
+        <i class="fa-brands fa-google mr-2"></i> Continue with Google
+      </button>
+      <button id="close-modal-btn" class="mt-4 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <!-- === HOME SECTION === -->
+    <section id="home-section" class="page-section">
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-navy to-navy-light dark:from-slate-800 dark:to-slate-900 py-20 px-4 mb-12 shadow-xl border border-navy-light/30 dark:border-slate-700">
+        <!-- Decorative blur circles -->
+        <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-blue-400/20 dark:bg-blue-500/10 blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-white/10 dark:bg-purple-500/10 blur-3xl"></div>
+        
+        <div class="relative max-w-4xl mx-auto text-center z-10">
+          <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6 shadow-sm">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-400"></span>
+            </span>
+            <span class="text-white/90 text-sm font-medium">Your All-in-One Academic Hub</span>
+          </div>
+          <h1 class="text-4xl font-extrabold text-white sm:text-6xl leading-tight mb-5">
+            Study Smarter,<br/>
+            <span class="text-blue-300 dark:text-blue-400">Together.</span>
+          </h1>
+          <p class="text-gray-300 dark:text-slate-300 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+            Access thousands of notes, past papers, and study materials uploaded by students like you.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Feature 1 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-100 dark:border-slate-700 hover:-translate-y-1 transition-transform cursor-pointer nav-link" data-target="forums-section">
+          <div class="h-12 w-12 rounded-md bg-blue-100 dark:bg-slate-700 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-book-open text-navy dark:text-blue-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Academic Resources</h3>
+          <p class="text-slate-600 dark:text-slate-400">Find and share notes, past papers, reports, and projects.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-100 dark:border-slate-700 hover:-translate-y-1 transition-transform cursor-pointer nav-link" data-target="marketplace-section">
+          <div class="h-12 w-12 rounded-md bg-green-100 dark:bg-slate-700 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-shop text-green-600 dark:text-green-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Marketplace</h3>
+          <p class="text-slate-600 dark:text-slate-400">Buy and sell books, calculators, and student essentials.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-100 dark:border-slate-700 hover:-translate-y-1 transition-transform cursor-pointer nav-link" data-target="notices-section">
+          <div class="h-12 w-12 rounded-md bg-yellow-100 dark:bg-slate-700 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-bullhorn text-yellow-600 dark:text-yellow-400 text-xl"></i>
+          </div>
+          <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">Notices & Events</h3>
+          <p class="text-slate-600 dark:text-slate-400">Stay updated with course announcements, clubs, and recruitment.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- === FORUMS (RESOURCES) SECTION === -->
+    <section id="forums-section" class="page-section hidden">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h2 class="text-3xl font-bold text-navy dark:text-white">Academic Resources</h2>
+          <p class="text-slate-600 dark:text-slate-400">Discover and share study materials.</p>
+        </div>
+        <button id="open-upload-modal-btn" class="bg-navy hover:bg-navy-light text-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload Resource
+        </button>
+      </div>
+
+      <!-- Filters -->
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 mb-6 flex flex-col md:flex-row gap-4">
+        <div class="flex-1 relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fa-solid fa-search text-slate-400"></i>
+          </div>
+          <input type="text" id="resource-search" class="w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy dark:focus:ring-blue-400" placeholder="Search subject or title...">
+        </div>
+        <select id="filter-category" class="w-full md:w-48 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+          <option value="all">All Categories</option>
+          <option value="Notes">Notes</option>
+          <option value="Past Paper">Past Papers</option>
+          <option value="Report">Reports</option>
+          <option value="Project">Projects</option>
+        </select>
+        <select id="filter-year" class="w-full md:w-32 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+          <option value="all">All Years</option>
+          <option value="1">Year 1</option>
+          <option value="2">Year 2</option>
+          <option value="3">Year 3</option>
+          <option value="4">Year 4</option>
+        </select>
+      </div>
+
+      <!-- Resources Grid (1 col mobile, 3 col desktop) -->
+      <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered via JS -->
+        <div class="col-span-full text-center py-10 text-slate-500">
+          <i class="fa-solid fa-circle-notch fa-spin text-3xl mb-2"></i>
+          <p>Loading resources...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Upload Resource Modal -->
+    <div id="upload-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-6 border-b dark:border-slate-700">
+          <h3 class="text-xl font-bold text-navy dark:text-white">Upload Resource</h3>
+          <button id="close-upload-modal" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <form id="upload-form" class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
+            <input type="text" id="up-title" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy" placeholder="e.g. Midterm Study Guide">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Subject Code</label>
+              <input type="text" id="up-subject" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy" placeholder="e.g. CS101">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Year</label>
+              <select id="up-year" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+              <select id="up-category" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+                <option value="Notes">Notes</option>
+                <option value="Past Paper">Past Paper</option>
+                <option value="Report">Report</option>
+                <option value="Project">Project</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sub-category</label>
+              <select id="up-subcategory" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+                <option value="Prof Notes">Prof Notes</option>
+                <option value="Student Notes">Student Notes</option>
+                <option value="Answers">Answers</option>
+                <option value="N/A">N/A</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">File (PDF or Image)</label>
+            <input type="file" id="up-file" required accept=".pdf,image/*" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-navy file:text-white hover:file:bg-navy-light cursor-pointer">
+          </div>
+          <div class="pt-4 border-t dark:border-slate-700">
+            <button type="submit" id="up-submit-btn" class="w-full bg-navy hover:bg-navy-light text-white px-4 py-2 rounded-md shadow-sm font-medium transition-colors flex justify-center items-center">
+              Submit Resource
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- === MARKETPLACE SECTION === -->
+    <section id="marketplace-section" class="page-section hidden">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+          <h2 class="text-3xl font-bold text-navy dark:text-white">Marketplace</h2>
+          <p class="text-slate-600 dark:text-slate-400">Buy and sell items within the campus community.</p>
+        </div>
+        <button id="open-market-modal-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i> List Item
+        </button>
+      </div>
+
+      <!-- Marketplace Grid -->
+      <div id="market-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- Marketplace Add Modal -->
+    <div id="market-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center p-6 border-b dark:border-slate-700">
+          <h3 class="text-xl font-bold text-navy dark:text-white">List Marketplace Item</h3>
+          <button id="close-market-modal" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i class="fa-solid fa-xmark text-xl"></i>
+          </button>
+        </div>
+        <form id="market-form" class="p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Item Name</label>
+            <input type="text" id="mkt-name" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price ($)</label>
+              <input type="number" id="mkt-price" required min="0" step="0.01" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Contact Number</label>
+              <input type="tel" id="mkt-contact" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Image</label>
+            <input type="file" id="mkt-file" required accept="image/*" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-navy file:text-white hover:file:bg-navy-light cursor-pointer">
+          </div>
+          <div class="pt-4 border-t dark:border-slate-700">
+            <button type="submit" id="mkt-submit-btn" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-sm font-medium transition-colors">
+              Post Listing
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- === NOTICES & EVENTS SECTION === -->
+    <section id="notices-section" class="page-section hidden">
+      <div class="mb-6 flex justify-between items-end">
+        <div>
+          <h2 class="text-3xl font-bold text-navy dark:text-white">Notices & Events</h2>
+          <p class="text-slate-600 dark:text-slate-400">Campus updates, club events, and recruitments.</p>
+        </div>
+        <button id="add-notice-mock-btn" class="text-sm text-navy dark:text-blue-400 hover:underline">Admin: Add Mock Notice</button>
+      </div>
+
+      <!-- Categories Filter -->
+      <div class="flex space-x-2 mb-6 overflow-x-auto pb-2">
+        <button class="notice-filter-btn active px-4 py-1 rounded-full text-sm font-medium bg-navy text-white" data-category="all">All</button>
+        <button class="notice-filter-btn px-4 py-1 rounded-full text-sm font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600" data-category="Course">Course</button>
+        <button class="notice-filter-btn px-4 py-1 rounded-full text-sm font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600" data-category="Student">Student</button>
+        <button class="notice-filter-btn px-4 py-1 rounded-full text-sm font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600" data-category="Club">Club</button>
+        <button class="notice-filter-btn px-4 py-1 rounded-full text-sm font-medium bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-600" data-category="Recruitment">Recruitment</button>
+      </div>
+
+      <div id="notices-feed" class="max-w-3xl mx-auto space-y-4">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- === PROFILE & SAVED SECTION === -->
+    <section id="profile-section" class="page-section hidden">
+      <div class="flex flex-col md:flex-row gap-8">
+        
+        <!-- Sidebar Profile -->
+        <div class="w-full md:w-1/3">
+          <div class="bg-white dark:bg-slate-800 rounded-xl shadow-md p-6 border border-slate-100 dark:border-slate-700 sticky top-20">
+            <div class="text-center mb-6">
+              <img id="prof-photo" class="h-24 w-24 rounded-full mx-auto object-cover border-4 border-cream dark:border-slate-700 mb-4 shadow-sm" src="https://via.placeholder.com/100" alt="">
+              <h2 id="prof-name" class="text-xl font-bold text-slate-900 dark:text-white">User Name</h2>
+              <p id="prof-email" class="text-sm text-slate-500 dark:text-slate-400">user@example.com</p>
+            </div>
+            
+            <div class="border-t dark:border-slate-700 pt-4 space-y-3">
+              <!-- Edit Profile Form (Mock logic) -->
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Department</label>
+                <input type="text" id="prof-dept" class="w-full px-2 py-1 text-sm border-b border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none focus:border-navy" placeholder="e.g. Computer Science" value="Computer Science">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Year</label>
+                <select id="prof-year" class="w-full px-2 py-1 text-sm border-b border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none focus:border-navy">
+                  <option value="1">Year 1</option>
+                  <option value="2" selected>Year 2</option>
+                  <option value="3">Year 3</option>
+                  <option value="4">Year 4</option>
+                </select>
+              </div>
+              <button id="save-prof-btn" class="mt-4 w-full text-sm text-navy dark:text-blue-400 font-medium hover:underline text-right">Update Info</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Saved Items -->
+        <div class="w-full md:w-2/3">
+          <h2 class="text-2xl font-bold text-navy dark:text-white mb-6 border-b dark:border-slate-700 pb-2">
+            <i class="fa-solid fa-bookmark mr-2"></i> Saved Resources
+          </h2>
+          
+          <div id="saved-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Rendered via JS -->
+            <div class="col-span-full bg-white dark:bg-slate-800 p-8 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 text-center">
+              <i class="fa-regular fa-bookmark text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+              <p class="text-slate-500 dark:text-slate-400">You haven't saved any resources yet.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-navy dark:bg-slate-900 border-t border-navy-light dark:border-slate-800 text-white py-6 text-center text-sm transition-colors duration-300 mt-auto">
+    <p>&copy; 2026 Acadex. Built for the Hackathon.</p>
+  </footer>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-green-400"></i>
+    <span id="toast-msg">Action successful</span>
+  </div>
+
+  <!-- Consolidated App Logic -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
