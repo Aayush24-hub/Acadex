@@ -31,22 +31,31 @@ let allMarketplace = [];
 let allNotices = [];
 
 const mockResources = [
-  { id: '1', title: 'Data Structures Midterm', subject: 'CS201', year: '2', category: 'Notes', subcategory: 'Student Notes', fileUrl: '#', uploaderName: 'Alice', typeIcon: 'fa-file-lines' },
-  { id: '2', title: 'Calculus Final 2023', subject: 'MATH101', year: '1', category: 'Past Paper', subcategory: 'N/A', fileUrl: '#', uploaderName: 'Bob', typeIcon: 'fa-file-pdf' }
+  { id: '1', title: 'Data Structures Midterm', subject: 'CS201', semester: '2', category: 'Notes', subcategory: 'Student Notes', fileUrl: '#', uploaderName: 'Alice', typeIcon: 'fa-file-lines' },
+  { id: '2', title: 'Calculus Final 2023', subject: 'MATH101', semester: '1', category: 'Past Paper', subcategory: 'N/A', fileUrl: '#', uploaderName: 'Bob', typeIcon: 'fa-file-pdf' }
 ];
 
 const mockMarketplace = [
-  { id: '1', name: 'Physics Textbook 10th Ed', price: '45.00', contact: '555-0198', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400' }
+  { id: '1', name: 'Physics Textbook 10th Ed', category: 'Academic Resources', price: '45.00', contact: '555-0198', description: 'Gently used physics textbook. No highlights or markings. Comes with the online access code (unused).', imageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400' },
+  { id: '2', name: 'Single Room near Uni', category: 'Room Rentals', price: '4500.00', contact: '555-1234', description: 'Spacious furnished room with attached bath. 5 mins walk to campus.', imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=400' }
 ];
 
 const mockNotices = [
-  { id: '1', title: 'CS201 Lecture Cancelled', category: 'Course', content: 'Todays lecture is cancelled due to weather.', date: 'Today' },
+  { id: '1', title: 'Semester Restart Date', category: 'Course', content: 'The new semester will begin on September 1st, 2026. Please be prepared!', date: 'Today' },
   { id: '2', title: 'Hackathon 2026 Registration', category: 'Event', content: 'Join the annual hackathon! Prizes up to $5k.', date: 'Yesterday' }
 ];
 
 // ==========================================
 // 3. UI CONTROLLERS & UTILS
 // ==========================================
+window.copyContact = (contact) => {
+  navigator.clipboard.writeText(contact).then(() => {
+    showToast(`Copied contact number: ${contact}`);
+  }).catch(err => {
+    showToast("Failed to copy contact.", true);
+  });
+};
+
 const showToast = (msg, isError = false) => {
   const toast = document.getElementById('toast');
   const icon = document.getElementById('toast-icon');
@@ -160,6 +169,7 @@ const setupModals = () => {
   const uploadModal = document.getElementById('upload-modal');
   const marketModal = document.getElementById('market-modal');
   const loginModal = document.getElementById('login-modal');
+  const itemDetailsModal = document.getElementById('item-details-modal');
 
   document.getElementById('open-upload-modal-btn')?.addEventListener('click', () => {
     if(!currentUser && currentUser !== 'demo') {
@@ -180,6 +190,7 @@ const setupModals = () => {
   document.getElementById('close-upload-modal')?.addEventListener('click', () => uploadModal.classList.add('hidden'));
   document.getElementById('close-market-modal')?.addEventListener('click', () => marketModal.classList.add('hidden'));
   document.getElementById('close-modal-btn')?.addEventListener('click', () => loginModal.classList.add('hidden'));
+  document.getElementById('close-item-details-modal')?.addEventListener('click', () => itemDetailsModal.classList.add('hidden'));
 };
 
 // ==========================================
@@ -325,7 +336,7 @@ const renderResources = (data) => {
       <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">${res.title}</h3>
       <div class="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-4">
         <span><i class="fa-solid fa-book mr-1"></i> ${res.subject}</span>
-        <span>Year ${res.year}</span>
+        <span>Semester ${res.semester}</span>
       </div>
       <div class="mt-auto flex justify-between items-center pt-4 border-t border-slate-100 dark:border-slate-700">
         <span class="text-xs text-slate-500 dark:text-slate-400">By ${res.uploaderName}</span>
@@ -363,13 +374,13 @@ const loadResources = async () => {
 const filterResources = () => {
   const searchTerm = document.getElementById('resource-search').value.toLowerCase();
   const cat = document.getElementById('filter-category').value;
-  const year = document.getElementById('filter-year').value;
+  const semester = document.getElementById('filter-semester').value;
 
   const filtered = allResources.filter(res => {
     const matchSearch = res.title.toLowerCase().includes(searchTerm) || res.subject.toLowerCase().includes(searchTerm);
     const matchCat = cat === 'all' || res.category === cat;
-    const matchYear = year === 'all' || res.year === year;
-    return matchSearch && matchCat && matchYear;
+    const matchSemester = semester === 'all' || res.semester === semester;
+    return matchSearch && matchCat && matchSemester;
   });
 
   renderResources(filtered);
@@ -378,12 +389,18 @@ const filterResources = () => {
 // ==========================================
 // 6. MARKETPLACE & NOTICES
 // ==========================================
+const filterMarketplace = () => {
+  const cat = document.getElementById('mkt-filter-category')?.value || 'all';
+  const filtered = cat === 'all' ? allMarketplace : allMarketplace.filter(item => item.category === cat);
+  renderMarketplace(filtered);
+};
+
 const renderMarketplace = (data) => {
   const container = document.getElementById('market-grid');
   container.innerHTML = '';
   
   if (data.length === 0) {
-    container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-500">No items available.</div>';
+    container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-500">No items available in this category.</div>';
     return;
   }
 
@@ -393,15 +410,35 @@ const renderMarketplace = (data) => {
     card.innerHTML = `
       <img src="${item.imageUrl}" alt="${item.name}" class="h-48 w-full object-cover">
       <div class="p-4 flex flex-col flex-grow">
+        <span class="inline-block px-2 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs font-bold rounded mb-2 w-max">${item.category || 'Item'}</span>
         <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">${item.name}</h3>
-        <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-4">$${item.price}</div>
-        <a href="tel:${item.contact}" class="mt-auto w-full block text-center bg-cream hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-2 rounded-md transition-colors text-sm font-medium border border-slate-200 dark:border-slate-600">
-          <i class="fa-solid fa-phone mr-1"></i> Contact Seller
-        </a>
+        <div class="text-2xl font-bold text-green-600 dark:text-green-400 mb-4">Rs. ${item.price} ${item.category === 'Room Rentals' ? '<span class="text-sm font-normal text-slate-500">/ mo</span>' : ''}</div>
+        <div class="mt-auto flex gap-2">
+          <button onclick="openItemDetails('${item.id}')" class="flex-1 bg-navy hover:bg-navy-light text-white px-3 py-2 rounded-md transition-colors text-sm font-medium">
+            Details
+          </button>
+          <button onclick="copyContact('${item.contact}')" class="flex-1 bg-cream hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-3 py-2 rounded-md transition-colors text-sm font-medium border border-slate-200 dark:border-slate-600">
+            <i class="fa-solid fa-phone"></i>
+          </button>
+        </div>
       </div>
     `;
     container.appendChild(card);
   });
+};
+
+window.openItemDetails = (id) => {
+  const item = allMarketplace.find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('detail-img').src = item.imageUrl;
+  document.getElementById('detail-name').textContent = item.name;
+  document.getElementById('detail-price').innerHTML = 'Rs. ' + item.price + (item.category === 'Room Rentals' ? '<span class="text-lg font-normal text-slate-500"> / mo</span>' : '');
+  document.getElementById('detail-desc').textContent = item.description || 'No description available.';
+  const contactBtn = document.getElementById('detail-contact-btn');
+  contactBtn.innerHTML = `<i class="fa-solid fa-phone mr-1"></i> Contact: ${item.contact}`;
+  contactBtn.onclick = () => window.copyContact(item.contact);
+  
+  document.getElementById('item-details-modal').classList.remove('hidden');
 };
 
 const loadMarketplace = async () => {
@@ -413,10 +450,10 @@ const loadMarketplace = async () => {
       allMarketplace.push({ id: doc.id, ...doc.data() });
     });
     if(allMarketplace.length === 0) allMarketplace = mockMarketplace;
-    renderMarketplace(allMarketplace);
+    filterMarketplace();
   } catch (error) {
     allMarketplace = mockMarketplace;
-    renderMarketplace(allMarketplace);
+    filterMarketplace();
   }
 };
 
@@ -558,7 +595,7 @@ const renderSavedItems = () => {
         ${res.category}
       </span>
       <h3 class="text-md font-bold text-slate-900 dark:text-white mb-1 pr-6">${res.title}</h3>
-      <div class="text-xs text-slate-500 dark:text-slate-400 mb-4">${res.subject} • Year ${res.year}</div>
+      <div class="text-xs text-slate-500 dark:text-slate-400 mb-4">${res.subject} • Semester ${res.semester}</div>
       <a href="${res.fileUrl}" target="_blank" class="mt-auto text-navy dark:text-blue-400 hover:underline text-sm font-medium">View Resource &rarr;</a>
     `;
     container.appendChild(card);
@@ -605,7 +642,8 @@ const setupForms = () => {
   // Filters
   document.getElementById('resource-search')?.addEventListener('input', filterResources);
   document.getElementById('filter-category')?.addEventListener('change', filterResources);
-  document.getElementById('filter-year')?.addEventListener('change', filterResources);
+  document.getElementById('filter-semester')?.addEventListener('change', filterResources);
+  document.getElementById('mkt-filter-category')?.addEventListener('change', filterMarketplace);
 
   // Notice Filters
   document.querySelectorAll('.notice-filter-btn').forEach(btn => {
@@ -630,15 +668,29 @@ const setupForms = () => {
     try {
       const title = document.getElementById('up-title').value;
       const subject = document.getElementById('up-subject').value;
-      const year = document.getElementById('up-year').value;
+      const semester = document.getElementById('up-semester').value;
       const category = document.getElementById('up-category').value;
       const subcategory = document.getElementById('up-subcategory').value;
       const file = document.getElementById('up-file').files[0];
 
+      // Duplicate prevention
+      const isDuplicate = allResources.some(res => 
+        res.subject.toLowerCase() === subject.toLowerCase() && 
+        res.semester === semester && 
+        res.category === category
+      );
+
+      if (isDuplicate) {
+        showToast("This paper already exists", true);
+        btn.disabled = false;
+        btn.innerHTML = 'Submit Resource';
+        return;
+      }
+
       const fileUrl = await uploadFile(file, `resources/${subject}`);
 
       const data = {
-        title, subject, year, category, subcategory, fileUrl,
+        title, subject, semester, category, subcategory, fileUrl,
         uploaderId: currentUser?.uid || 'demo_id',
         uploaderName: currentUser?.displayName || 'Demo User',
       };
@@ -670,15 +722,17 @@ const setupForms = () => {
     btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Posting...';
 
     try {
+      const category = document.getElementById('mkt-category').value;
       const name = document.getElementById('mkt-name').value;
       const price = document.getElementById('mkt-price').value;
       const contact = document.getElementById('mkt-contact').value;
+      const description = document.getElementById('mkt-desc').value;
       const file = document.getElementById('mkt-file').files[0];
 
       const imageUrl = await uploadFile(file, 'marketplace');
 
       const data = {
-        name, price, contact, imageUrl,
+        category, name, price, contact, description, imageUrl,
         sellerId: currentUser?.uid || 'demo_id'
       };
 
@@ -691,7 +745,7 @@ const setupForms = () => {
       showToast("Item listed successfully!");
       document.getElementById('market-modal').classList.add('hidden');
       e.target.reset();
-      renderMarketplace(allMarketplace);
+      filterMarketplace();
 
     } catch (error) {
       showToast("Failed to list item: " + error.message, true);
@@ -721,7 +775,112 @@ const setupForms = () => {
 };
 
 // ==========================================
-// 9. INIT
+// 9. CHATBOT LOGIC
+// ==========================================
+const setupChatbot = () => {
+  const toggleBtn = document.getElementById('chatbot-toggle');
+  const closeBtn = document.getElementById('chatbot-close');
+  const chatWindow = document.getElementById('chatbot-window');
+  const chatForm = document.getElementById('chatbot-form');
+  const chatInput = document.getElementById('chatbot-input');
+  const messagesDiv = document.getElementById('chatbot-messages');
+
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener('click', () => {
+    chatWindow.classList.toggle('hidden');
+    if (!chatWindow.classList.contains('hidden')) {
+      chatInput.focus();
+    }
+  });
+
+  closeBtn.addEventListener('click', () => {
+    chatWindow.classList.add('hidden');
+  });
+
+  const addMessage = (text, isUser = false, isHtml = false) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `flex ${isUser ? 'justify-end' : ''}`;
+    
+    const bubble = document.createElement('div');
+    bubble.className = `px-3 py-2 rounded-lg max-w-[85%] ${
+      isUser 
+      ? 'bg-blue-600 text-white rounded-tr-none' 
+      : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-tl-none'
+    }`;
+    
+    if (isHtml) {
+      bubble.innerHTML = text;
+    } else {
+      bubble.textContent = text;
+    }
+
+    msgDiv.appendChild(bubble);
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  };
+
+  const processQuery = (query) => {
+    const q = query.toLowerCase();
+    
+    if (q.includes('home')) {
+      document.querySelector('[data-target="home-section"]')?.click();
+      return "I've navigated you to the Home page.";
+    }
+    if (q.includes('market') || q.includes('buy') || q.includes('sell')) {
+      document.querySelector('[data-target="marketplace-section"]')?.click();
+      return "I've navigated you to the Marketplace.";
+    }
+    if (q.includes('notice') || q.includes('event')) {
+      document.querySelector('[data-target="notices-section"]')?.click();
+      return "I've navigated you to Notices & Events.";
+    }
+    if (q.includes('profile') || q.includes('saved')) {
+      document.querySelector('[data-target="profile-section"]')?.click();
+      return "I've navigated you to your Profile.";
+    }
+
+    const results = allResources.filter(res => {
+      const text = `${res.title} ${res.subject} ${res.category} ${res.subcategory} year ${res.year} semester ${res.semester}`.toLowerCase();
+      const words = q.replace(/[^a-z0-9\s]/g, '').split(' ').filter(w => w.length > 2);
+      if (words.length === 0) return text.includes(q);
+      return words.every(word => text.includes(word));
+    });
+
+    if (results.length > 0) {
+      document.querySelector('[data-target="forums-section"]')?.click();
+      let response = `Found ${results.length} result(s):<br><ul class="list-disc pl-4 mt-2 space-y-1">`;
+      results.slice(0, 3).forEach(res => {
+        response += `<li><a href="${res.fileUrl}" target="_blank" class="text-blue-500 dark:text-blue-400 hover:underline font-medium">${res.title} (${res.subject})</a></li>`;
+      });
+      if (results.length > 3) {
+        response += `<li>...and ${results.length - 3} more. Check Academic Resources!</li>`;
+      }
+      response += `</ul>`;
+      return response;
+    }
+
+    return "I couldn't find any resources matching your query. Try searching by subject code, category (e.g. 'notes'), or semester.";
+  };
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = chatInput.value.trim();
+    if (!val) return;
+    
+    addMessage(val, true);
+    chatInput.value = '';
+    
+    setTimeout(() => {
+      const response = processQuery(val);
+      const isHtml = response.includes('<br>') || response.includes('<ul');
+      addMessage(response, false, isHtml);
+    }, 500);
+  });
+};
+
+// ==========================================
+// 10. INIT
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   setupDarkMode();
@@ -729,4 +888,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAuth();
   setupModals();
   setupForms();
+  setupChatbot();
 });

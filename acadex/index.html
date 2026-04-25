@@ -231,12 +231,16 @@
           <option value="Report">Reports</option>
           <option value="Project">Projects</option>
         </select>
-        <select id="filter-year" class="w-full md:w-32 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
-          <option value="all">All Years</option>
-          <option value="1">Year 1</option>
-          <option value="2">Year 2</option>
-          <option value="3">Year 3</option>
-          <option value="4">Year 4</option>
+        <select id="filter-semester" class="w-full md:w-40 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+          <option value="all">All Semesters</option>
+          <option value="1">Semester 1</option>
+          <option value="2">Semester 2</option>
+          <option value="3">Semester 3</option>
+          <option value="4">Semester 4</option>
+          <option value="5">Semester 5</option>
+          <option value="6">Semester 6</option>
+          <option value="7">Semester 7</option>
+          <option value="8">Semester 8</option>
         </select>
       </div>
 
@@ -270,12 +274,16 @@
               <input type="text" id="up-subject" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy" placeholder="e.g. CS101">
             </div>
             <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Year</label>
-              <select id="up-year" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
-                <option value="1">Year 1</option>
-                <option value="2">Year 2</option>
-                <option value="3">Year 3</option>
-                <option value="4">Year 4</option>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Semester</label>
+              <select id="up-semester" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
               </select>
             </div>
           </div>
@@ -317,11 +325,22 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h2 class="text-3xl font-bold text-navy dark:text-white">Marketplace</h2>
-          <p class="text-slate-600 dark:text-slate-400">Buy and sell items within the campus community.</p>
+          <p class="text-slate-600 dark:text-slate-400">Buy, sell, and rent within the campus community.</p>
         </div>
         <button id="open-market-modal-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow-sm flex items-center gap-2">
           <i class="fa-solid fa-plus"></i> List Item
         </button>
+      </div>
+
+      <!-- Marketplace Filters -->
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 mb-6 flex flex-col md:flex-row gap-4">
+        <select id="mkt-filter-category" class="w-full md:w-64 py-2 px-3 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+          <option value="all">All Categories</option>
+          <option value="Academic Resources">Academic Resources</option>
+          <option value="Academic Materials">Academic Materials</option>
+          <option value="Furniture">Furniture</option>
+          <option value="Room Rentals">Room Rentals</option>
+        </select>
       </div>
 
       <!-- Marketplace Grid -->
@@ -341,18 +360,31 @@
         </div>
         <form id="market-form" class="p-6 space-y-4">
           <div>
-            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Item Name</label>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+            <select id="mkt-category" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
+              <option value="Academic Resources">Academic Resources (Books, Notes, Files)</option>
+              <option value="Academic Materials">Academic Materials (Drafters, Aprons, etc)</option>
+              <option value="Furniture">Furniture (Tables, Beds, Shelves)</option>
+              <option value="Room Rentals">Room Rentals (Find Home)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Item Name / Title</label>
             <input type="text" id="mkt-name" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price ($)</label>
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Price / Rent (Rs.)</label>
               <input type="number" id="mkt-price" required min="0" step="0.01" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
             </div>
             <div>
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Contact Number</label>
               <input type="tel" id="mkt-contact" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy">
             </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
+            <textarea id="mkt-desc" rows="3" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-navy" placeholder="Add some details about the item..."></textarea>
           </div>
           <div>
             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Image</label>
@@ -364,6 +396,27 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Marketplace Item Details Modal -->
+    <div id="item-details-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+      <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col md:flex-row relative">
+        <button id="close-item-details-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 z-10 bg-white/50 dark:bg-slate-800/50 rounded-full p-2">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+        <div class="md:w-1/2 bg-slate-100 dark:bg-slate-700">
+          <img id="detail-img" src="" alt="Item Image" class="w-full h-64 md:h-full object-cover">
+        </div>
+        <div class="p-6 md:w-1/2 flex flex-col">
+          <h3 id="detail-name" class="text-2xl font-bold text-navy dark:text-white mb-2">Item Name</h3>
+          <div id="detail-price" class="text-3xl font-bold text-green-600 dark:text-green-400 mb-4">Rs. 0.00</div>
+          <div class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</div>
+          <p id="detail-desc" class="text-slate-600 dark:text-slate-400 text-sm mb-6 flex-grow whitespace-pre-wrap">No description available.</p>
+          <button id="detail-contact-btn" class="w-full text-center bg-cream hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white px-4 py-3 rounded-md transition-colors font-medium border border-slate-200 dark:border-slate-600 mt-auto">
+            <i class="fa-solid fa-phone mr-1"></i> Contact Seller
+          </button>
+        </div>
       </div>
     </div>
 
@@ -411,12 +464,16 @@
                 <input type="text" id="prof-dept" class="w-full px-2 py-1 text-sm border-b border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none focus:border-navy" placeholder="e.g. Computer Science" value="Computer Science">
               </div>
               <div>
-                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Year</label>
-                <select id="prof-year" class="w-full px-2 py-1 text-sm border-b border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none focus:border-navy">
-                  <option value="1">Year 1</option>
-                  <option value="2" selected>Year 2</option>
-                  <option value="3">Year 3</option>
-                  <option value="4">Year 4</option>
+                <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Semester</label>
+                <select id="prof-semester" class="w-full px-2 py-1 text-sm border-b border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-white focus:outline-none focus:border-navy">
+                  <option value="1">Semester 1</option>
+                  <option value="2" selected>Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="4">Semester 4</option>
+                  <option value="5">Semester 5</option>
+                  <option value="6">Semester 6</option>
+                  <option value="7">Semester 7</option>
+                  <option value="8">Semester 8</option>
                 </select>
               </div>
               <button id="save-prof-btn" class="mt-4 w-full text-sm text-navy dark:text-blue-400 font-medium hover:underline text-right">Update Info</button>
@@ -446,6 +503,45 @@
   <footer class="bg-navy dark:bg-slate-900 border-t border-navy-light dark:border-slate-800 text-white py-6 text-center text-sm transition-colors duration-300 mt-auto">
     <p>&copy; 2026 Acadex. Built for the Hackathon.</p>
   </footer>
+
+  <!-- Chatbot Widget -->
+  <div id="chatbot-widget" class="fixed bottom-4 left-4 z-40">
+    <button id="chatbot-toggle" class="bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-transform hover:scale-105">
+      <i class="fa-solid fa-robot text-2xl"></i>
+    </button>
+    
+    <div id="chatbot-window" class="hidden absolute bottom-16 left-0 w-80 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col h-96 transition-all origin-bottom-left">
+      <!-- Header -->
+      <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-robot"></i>
+          <span class="font-bold">Acadex Bot</span>
+        </div>
+        <button id="chatbot-close" class="text-blue-100 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <!-- Messages Area -->
+      <div id="chatbot-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50 dark:bg-slate-900/50 text-sm">
+        <div class="flex">
+          <div class="bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 px-3 py-2 rounded-lg rounded-tl-none max-w-[85%]">
+            Hi! I can help you find notes, suggest resources, or guide your navigation. What are you looking for? (e.g. "Math past papers 2023")
+          </div>
+        </div>
+      </div>
+      
+      <!-- Input Area -->
+      <div class="p-3 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+        <form id="chatbot-form" class="flex gap-2">
+          <input type="text" id="chatbot-input" class="flex-grow px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask me something...">
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- Notification Toast -->
   <div id="toast" class="fixed bottom-4 right-4 bg-slate-800 text-white px-4 py-3 rounded shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
